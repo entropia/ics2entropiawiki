@@ -1,1 +1,2 @@
 ics>=0.4
+mwclient
