@@ -33,6 +33,9 @@ if not ics_url or file:
     config.read(configfile)
     try:
         ics_url=config["default"]["url"]
+        wiki_user=config["default"]["wikiuser"]
+        wiki_pw=config["default"]["wikipass"]
+        wiki_site=config["default"]["wikisite"]
         print(ics_url)
     except KeyError as e:
         print("Please have a look at the sample config provided with the package")
@@ -104,4 +107,7 @@ for event in sorted(calendar.events, key=lambda ev: ev.begin):
 
 termine = table_header+"\n"+"".join(cal_strings)+"\n"+"".join(table_footer)
 
-site
+site = Site('entropia.de',path='/')
+site.login(wiki_user,wiki_pw)
+page=site.pages[wiki_site]
+page.save(termine,"Terminbox was here")
