@@ -18,12 +18,15 @@ parser.add_argument("-c", "--config",
                     )
 parser.add_argument("-u","--url",
                     dest="ics_url",
-                    help="The URL under which the ICS-file can be retrieved"
+                    help="The URL under which the ICS-file can be retrieved",
+                    metavar="URL",
                     )
 parser.add_argument("-f","--file",
                     dest="local_file",
-                    help="Local ics file"
+                    help="Local ics file",
+                    metavar="FILE"
                     )
+
 args = parser.parse_args()
 configfile = args.configfile
 ics_url = args.ics_url
