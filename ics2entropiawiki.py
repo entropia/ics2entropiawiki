@@ -31,6 +31,7 @@ args = parser.parse_args()
 configfile = args.configfile
 ics_url = args.ics_url
 file = args.local_file
+
 if not ics_url or file:
     config = configparser.ConfigParser()
     config.read(configfile)
@@ -73,24 +74,22 @@ for event in sorted(calendar.events, key=lambda ev: ev.begin):
     begin_day_fmt = begintime.strftime("%a., %d.%m.%Y")
     end_day_fmt = endtime.strftime("%a., %d.%m.%Y")
 
+    start_time = ""
+    end_data = ""
+    location = ""
+    links = None
+
     if not event.all_day:
         start_time = begintime.strftime("%H:%M")
-    else:
-        start_time = ""
 
     if endtime - begintime > timedelta(days=1):
         end_date = " - "+end_day_fmt
-    else:
-        end_date = ""
 
-    if not event.location:
-        location = ""
-    elif event.location.lower() in locations.keys():
-        location = locations[event.location.lower()]
-    else:
+    if event.location:
         location = event.location
+        if event.location.lower() in locations.keys():
+            location = locations[event.location.lower()]
 
-    links = None
     if event.description:
         links = re.findall("^Link:(.*)$",event.description)
 
