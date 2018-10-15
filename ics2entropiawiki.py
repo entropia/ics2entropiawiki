@@ -8,6 +8,7 @@ from ics import Calendar
 from argparse import ArgumentParser
 from datetime import timedelta, datetime
 from mwclient import Site
+from dateutil.tz import tzlocal
 
 
 class Event(object):
@@ -51,7 +52,7 @@ class Event(object):
 
     @property
     def is_past_event(self):
-        if self.endtime - datetime.now() > timedelta(days=1):
+        if self.endtime - datetime.now(tz=tzlocal()) > timedelta(days=1):
             return True
         else:
             return False
