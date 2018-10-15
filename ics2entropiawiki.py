@@ -239,17 +239,6 @@ def main():
             print("Please have a look at the sample config provided with the package")
             raise e
 
-    table_header = """
-    {| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
-    ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
-    """
-    table_footer = ("|}",
-                    "\n",
-                    "Weitere Links: [[Vorlage:Termine|Termine]] ",
-                    "([https://entropia.de/index.php?title=Vorlage:Termine&action=edit Bearbeiten]),",
-                    " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
-                    )
-    line_separator = "|-\n| "
 
     event_strings = []
     past_event_strings = []
