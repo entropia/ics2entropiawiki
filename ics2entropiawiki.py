@@ -100,18 +100,74 @@ class Event(object):
         return description
 
     def __str__(self):
-        event_str =("| "+
-                    self.begin_date +
-                    self.end_date +
-                    " || " +
-                    self.start_time +
-                    " || " +
-                    self.location +
-                    " || " +
-                    self.description
-                    )
+        event_str = ("| " +
+                     self.begin_date +
+                     self.end_date +
+                     " || " +
+                     self.start_time +
+                     " || " +
+                     self.location +
+                     " || " +
+                     self.description
+                     )
 
         return event_str
+
+
+def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
+    """
+    Append the "new" past events to the wiki archive page
+    :param past_events: the past events that were not added to the events page
+    :type: list
+    :param wiki_user: bot user for the wiki
+    :type: str
+    :param wiki_pw: password for the wiki user
+    :type: str
+    :param wiki_archive: archive page
+    :type: str
+    :return: None
+    :rtype: None
+    """
+
+    site = Site('entropia.de', path='/')
+    site.login(wiki_user, wiki_pw)
+    page = site.pages[wiki_archive]
+    text = page.text().split('\n')
+    last_table_position = 0
+
+    for event in past_events:
+        year_header = "== {} ==".format(event.endtime.strftime('%Y'))
+
+        for index, txtline in enumerate(text):
+            if txtline == '|}':
+                last_table_position = index
+
+        if str(event) not in text:
+            continue
+
+        if year_header in text:
+            append_list = (
+                '\n' +
+                line_separator +
+                str(event)
+            )
+            text = text[:last_table_position]+[append_list, ]+text[last_table_position:]
+        else:
+            append_list = (
+                3*'\n' +
+                year_header +
+                archive_table_header +
+                '\n' +
+                line_separator +
+                '\n' +
+                str(event) +
+                '\n|}'
+            )
+            text = text[:last_table_position+1]+[append_list, ]+text[last_table_position+1:]
+
+    page.save("\n".join(text))
+
+    return None
 
 
 def main():
