@@ -9,6 +9,25 @@ from argparse import ArgumentParser
 from datetime import timedelta, datetime
 from mwclient import Site
 
+
+class Event(object):
+    def __init__(self, event):
+        self.event = event
+        self.begintime = event.begin.datetime.astimezone()
+        self.endtime = event._end_time.datetime.astimezone()
+        self.location = None
+
+    def get_location(self):
+        locations = {
+            "entropia": "[[Anfahrt|Entropia]]",
+        }
+        
+        if self.event.location:
+            self.location = event.location
+            if event.location.lower() in locations.keys():
+                self.location = locations[event.location.lower()]
+
+
 def main():
     parser = ArgumentParser()
     parser.add_argument("-c", "--config",
@@ -56,9 +75,6 @@ def main():
                     " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
                     )
     line_separator = "|-\n| "
-    locations = {
-        "entropia":"[[Anfahrt|Entropia]]",
-    }
 
     cal_strings=[]
 
@@ -89,13 +105,10 @@ def main():
         if endtime - begintime > timedelta(days=1):
             end_date = " - "+end_day_fmt
 
-        if event.location:
-            location = event.location
-            if event.location.lower() in locations.keys():
-                location = locations[event.location.lower()]
+
 
         if event.description:
-            links = re.findall("^Link:(.*)$",event.description)
+            links = re.findall("^Link:(.*)$", event.description)
 
         if links:
             description = "["+links[0]+" "+event.name+"]"
