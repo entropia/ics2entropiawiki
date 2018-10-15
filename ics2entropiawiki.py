@@ -6,7 +6,7 @@ import re
 
 from ics import Calendar
 from argparse import ArgumentParser
-from datetime import timedelta
+from datetime import timedelta, datetime
 from mwclient import Site
 
 parser = ArgumentParser()
@@ -78,6 +78,9 @@ for event in sorted(calendar.events, key=lambda ev: ev.begin):
     end_data = ""
     location = ""
     links = None
+
+    if endtime - datetime.now() > timedelta(days=1):
+        continue
 
     if not event.all_day:
         start_time = begintime.strftime("%H:%M")
