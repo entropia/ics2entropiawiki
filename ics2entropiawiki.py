@@ -15,17 +15,84 @@ class Event(object):
         self.event = event
         self.begintime = event.begin.datetime.astimezone()
         self.endtime = event._end_time.datetime.astimezone()
-        self.location = None
 
-    def get_location(self):
+    @property
+    def location(self):
         locations = {
             "entropia": "[[Anfahrt|Entropia]]",
         }
-        
+
+        location = " "
+
         if self.event.location:
-            self.location = event.location
+            location = event.location
             if event.location.lower() in locations.keys():
-                self.location = locations[event.location.lower()]
+                location = locations[event.location.lower()]
+
+        return location
+
+    @property
+    def begin_date(self):
+        """
+        :return: Entropia-Wiki formated begin time
+        :rtype: str
+        """
+        return self.begintime.strftime("%a., %d.%m.%Y")
+
+    @property
+    def end_date(self):
+        """
+        :return: Entropia-Wiki formated end time
+        """
+        if self.endtime - self.begintime > timedelta(days=1):
+            return " - " + self.endtime.strftime("%a., %d.%m.%Y")
+        else:
+            return ""
+
+    @property
+    def is_past_event(self):
+        if self.endtime - datetime.now() > timedelta(days=1):
+            return True
+        else:
+            return False
+
+    @property
+    def start_time(self):
+        if not self.event.all_day:
+            return self.begintime.strftime("%H:%M")
+        else:
+            return " "
+
+    @property
+    def description(self):
+        links = None
+        event = self.event
+
+        if self.event.description:
+            links = re.findall("^Link:(.*)$", event.description)
+
+        if links and event.name:
+            description = "["+links[0]+" "+event.name+"]"
+        elif not self.event.name:
+            description = "N.A."
+        else:
+            description = event.name
+
+        return description
+
+    def __str__(self):
+        event_str =("| "+
+                    self.begin_date+
+                    self.end_date+
+                    " || "+
+                    self.start_time+
+                    " || "+
+                    self.location+
+                    " || "+
+                    self.description)
+
+        return event_str
+
 
 
 def main():
@@ -84,44 +151,9 @@ def main():
         calendar = Calendar(requests.get(ics_url).text)
 
     for event in sorted(calendar.events, key=lambda ev: ev.begin):
-        begintime = event.begin.datetime.astimezone()
-        # here an internal variable is called since event.end is off by one
-        # https://github.com/C4ptainCrunch/ics.py/issues/92
-        endtime = event._end_time.datetime.astimezone()
-        begin_day_fmt = begintime.strftime("%a., %d.%m.%Y")
-        end_day_fmt = endtime.strftime("%a., %d.%m.%Y")
-
-        start_time = ""
-        end_data = ""
-        location = ""
-        links = None
-
-        if endtime - datetime.now() > timedelta(days=1):
-            continue
-
-        if not event.all_day:
-            start_time = begintime.strftime("%H:%M")
-
-        if endtime - begintime > timedelta(days=1):
-            end_date = " - "+end_day_fmt
-
-
-
-        if event.description:
-            links = re.findall("^Link:(.*)$", event.description)
-
-        if links:
-            description = "["+links[0]+" "+event.name+"]"
-        elif not event.name:
-            description = "N.A."
-        else:
-            description = event.name
-
-        cal_strings.append("\n" + line_separator +
-                           begin_day_fmt + end_date + " || " +
-                           start_time +" || " +
-                           location +" || " +
-                           description
+        cal_strings.append("\n"+
+                           line_separator+
+                           str(Event(event))
                            )
 
     termine = table_header+"\n"+"".join(cal_strings)+"\n"+"".join(table_footer)
