@@ -25,9 +25,9 @@ class Event(object):
         location = " "
 
         if self.event.location:
-            location = event.location
-            if event.location.lower() in locations.keys():
-                location = locations[event.location.lower()]
+            location = self.event.location
+            if location.lower() in locations.keys():
+                location = locations[location.lower()]
 
         return location
 
@@ -82,14 +82,15 @@ class Event(object):
 
     def __str__(self):
         event_str =("| "+
-                    self.begin_date+
-                    self.end_date+
-                    " || "+
-                    self.start_time+
-                    " || "+
-                    self.location+
-                    " || "+
-                    self.description)
+                    self.begin_date +
+                    self.end_date +
+                    " || " +
+                    self.start_time +
+                    " || " +
+                    self.location +
+                    " || " +
+                    self.description
+                    )
 
         return event_str
 
@@ -134,7 +135,8 @@ def main():
 
     table_header = """
     {| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
-    ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung"""
+    ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
+    """
     table_footer = ("|}",
                     "\n",
                     "Weitere Links: [[Vorlage:Termine|Termine]] ",
