@@ -10,6 +10,19 @@ from datetime import timedelta, datetime
 from mwclient import Site
 from dateutil.tz import tzlocal
 
+table_header = """
+{| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
+! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
+"""
+
+table_footer = ("|}",
+                "\n",
+                "Weitere Links: [[Vorlage:Termine|Termine]] ",
+                "([https://entropia.de/index.php?title=Vorlage:Termine&action=edit Bearbeiten]),",
+                " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
+                )
+line_separator = "|-"
+
 
 class Event(object):
     def __init__(self, event):
