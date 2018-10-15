@@ -239,9 +239,9 @@ def main():
             print("Please have a look at the sample config provided with the package")
             raise e
 
-
     event_strings = []
     past_event_strings = []
+    past_events = []
 
     if file:
         calendar = Calendar(open(file))
@@ -262,11 +262,10 @@ def main():
                 line_separator +
                 str(event)
             )
-
+            past_events.append(event)
+    append_past_events(past_events, wiki_user, wiki_pw, wiki_archive)
     termine = table_header+"\n"+"".join(event_strings)+"\n"+"".join(table_footer)
-    vergangene_termine = table_header+"\n"+"".join(past_event_strings)+"\n"+"".join(table_footer)
     print(termine)
-    print(vergangene_termine)
     site = Site('entropia.de', path='/')
     site.login(wiki_user, wiki_pw)
     page = site.pages[wiki_page]
