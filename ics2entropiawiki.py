@@ -95,39 +95,70 @@ class Event(object):
         return event_str
 
 
-
 def main():
     parser = ArgumentParser()
-    parser.add_argument("-c", "--config",
-                        default="/etc/baikal2wiki/config.ini",
-                        dest="configfile",
-                        help="Configuration file path",
-                        metavar="CONFIG"
-                        )
-    parser.add_argument("-u","--url",
-                        dest="ics_url",
-                        help="The URL under which the ICS-file can be retrieved",
-                        metavar="URL",
-                        )
-    parser.add_argument("-f","--file",
-                        dest="local_file",
-                        help="Local ics file",
-                        metavar="FILE"
-                        )
+    parser.add_argument(
+        "-c", "--config",
+        default="/etc/baikal2wiki/config.ini",
+        dest="configfile",
+        help="Configuration file path",
+        metavar="CONFIG"
+    )
+    parser.add_argument(
+        "-u", "--url",
+        dest="ics_url",
+        help="The URL under which the ICS-file can be retrieved",
+        metavar="URL",
+    )
+    parser.add_argument(
+        "-f", "--file",
+        dest="local_file",
+        help="Local ics file",
+        metavar="FILE"
+    )
+    parser.add_argument(
+        "--wiki-user",
+        dest="wiki_user",
+        help="Wiki user",
+        metavar="WIKIUSER"
+    )
+    parser.add_argument(
+        "--wiki-password",
+        dest="wiki_pw",
+        help="Wiki user's password",
+        metavar="WIKIPW"
+    )
+    parser.add_argument(
+        "--wiki-page",
+        dest="wiki_page",
+        help='Wiki page',
+        metavar='WIKIPAGE'
+    )
+    parser.add_argument(
+        "--wiki-archive",
+        dest="wiki_archive",
+        help='Wiki archive',
+        metavar='WIKIARCHIVE'
+    )
 
     args = parser.parse_args()
     configfile = args.configfile
     ics_url = args.ics_url
     file = args.local_file
+    wiki_user = args.wiki_user
+    wiki_pw = args.wiki_pw
+    wiki_page = args.wiki_page
+    wiki_archive = args.wiki_archive
 
-    if not ics_url or file:
+    if configfile:
         config = configparser.ConfigParser()
         config.read(configfile)
         try:
-            ics_url=config["default"]["url"]
-            wiki_user=config["default"]["wikiuser"]
-            wiki_pw=config["default"]["wikipass"]
-            wiki_page=config["default"]["wikipage"]
+            ics_url = config["default"]["url"]
+            wiki_user = config["wiki"]["user"]
+            wiki_pw = config["wiki"]["pass"]
+            wiki_page = config["wiki"]["page"]
+            wiki_archive = config["wiki"]["archive"]
             print(ics_url)
         except KeyError as e:
             print("Please have a look at the sample config provided with the package")
@@ -145,7 +176,8 @@ def main():
                     )
     line_separator = "|-\n| "
 
-    cal_strings=[]
+    event_strings = []
+    past_event_strings = []
 
     if file:
         calendar = Calendar(open(file))
@@ -153,16 +185,27 @@ def main():
         calendar = Calendar(requests.get(ics_url).text)
 
     for event in sorted(calendar.events, key=lambda ev: ev.begin):
-        cal_strings.append("\n"+
-                           line_separator+
-                           str(Event(event))
-                           )
+        event = Event(event)
+        if not event.is_past_event:
+            event_strings.append(
+                "\n" +
+                line_separator +
+                str(event)
+            )
+        else:
+            past_event_strings.append(
+                "\n" +
+                line_separator +
+                str(event)
+            )
 
-    termine = table_header+"\n"+"".join(cal_strings)+"\n"+"".join(table_footer)
+    termine = table_header+"\n"+"".join(event_strings)+"\n"+"".join(table_footer)
+    vergangene_termine = table_header+"\n"+"".join(past_event_strings)+"\n"+"".join(table_footer)
     print(termine)
-    site = Site('entropia.de',path='/')
-    site.login(wiki_user,wiki_pw)
-    page=site.pages[wiki_page]
+    print(vergangene_termine)
+    site = Site('entropia.de', path='/')
+    site.login(wiki_user, wiki_pw)
+    page = site.pages[wiki_page]
     if termine:
         page.save(termine, "Terminbox was here")
 
