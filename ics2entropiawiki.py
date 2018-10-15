@@ -73,10 +73,7 @@ class Event(object):
 
     @property
     def is_past_event(self):
-        if self.endtime - datetime.now(tz=tzlocal()) > timedelta(days=1):
-            return True
-        else:
-            return False
+        return self.endtime - datetime.now(tz=tzlocal()) < timedelta(days=1)
 
     @property
     def start_time(self):
