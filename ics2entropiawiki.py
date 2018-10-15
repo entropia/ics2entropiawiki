@@ -15,6 +15,14 @@ table_header = """
 ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
 """
 
+archive_table_header = """
+{| class="termine" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;" width="100%"
+|width=15%|'''Datum'''
+|width=6%|'''Zeit'''
+|width=15%|'''Ort'''
+|width=69%|'''Beschreibung'''
+"""
+
 table_footer = ("|}",
                 "\n",
                 "Weitere Links: [[Vorlage:Termine|Termine]] ",
