@@ -85,7 +85,7 @@ class EntropiaEvent():
     @property
     def begin_date(self):
         """
-        :return: Entropia-Wiki formated begin time
+        :return: Entropia-Wiki formatted begin time
         :rtype: str
         """
         return self.begintime.strftime("%a., %d.%m.%Y")
@@ -93,7 +93,7 @@ class EntropiaEvent():
     @property
     def end_date(self):
         """
-        :return: Entropia-Wiki formated end time
+        :return: Entropia-Wiki formatted end time
         :rtype: str
         """
         end_date = ""
