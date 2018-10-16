@@ -33,7 +33,14 @@ line_separator = "|-"
 
 
 class EntropiaEvent(object):
+    """
+    Parses an ics Event and converts it to an entropia-wiki suitable form
+    """
     def __init__(self, event):
+        """
+        :param event: The event to be evaluated
+        :type event: ics.event.Event
+        """
         self.event = event
         self.begintime = event.begin.datetime.astimezone()
         self.endtime = event._end_time.datetime.astimezone()
@@ -65,6 +72,7 @@ class EntropiaEvent(object):
     def end_date(self):
         """
         :return: Entropia-Wiki formated end time
+        :rtype: str
         """
         if self.endtime - self.begintime > timedelta(days=1):
             return " - " + self.endtime.strftime("%a., %d.%m.%Y")
@@ -73,10 +81,18 @@ class EntropiaEvent(object):
 
     @property
     def is_past_event(self):
+        """
+        :return: Chech if the event lies in the past
+        :rtype: bool
+        """
         return self.endtime - datetime.now(tz=tzlocal()) < timedelta(days=1)
 
     @property
     def start_time(self):
+        """
+        :return: The starting time of the event
+        :rtype: str
+        """
         if not self.event.all_day:
             return self.begintime.strftime("%H:%M")
         else:
@@ -84,6 +100,10 @@ class EntropiaEvent(object):
 
     @property
     def description(self):
+        """
+        :return: The event's description
+        :rtype: str
+        """
         links = None
         event = self.event
 
@@ -100,6 +120,10 @@ class EntropiaEvent(object):
         return description
 
     def __str__(self):
+        """
+        :return: A wiki line describing the event
+        :rtype: str
+        """
         event_str = ("| " +
                      self.begin_date +
                      self.end_date +
@@ -118,13 +142,13 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
     """
     Append the "new" past events to the wiki archive page
     :param past_events: the past events that were not added to the events page
-    :type: list
+    :type past_events: list
     :param wiki_user: bot user for the wiki
-    :type: str
+    :type wiki_user: str
     :param wiki_pw: password for the wiki user
-    :type: str
+    :type wiki_pw: str
     :param wiki_archive: archive page
-    :type: str
+    :type wiki_archive: str
     :return: None
     :rtype: None
     """
