@@ -32,7 +32,7 @@ table_footer = ("|}",
 line_separator = "|-"
 
 
-class Event(object):
+class EntropiaEvent(object):
     def __init__(self, event):
         self.event = event
         self.begintime = event.begin.datetime.astimezone()
@@ -249,7 +249,7 @@ def main():
         calendar = Calendar(requests.get(ics_url).text)
 
     for event in sorted(calendar.events, key=lambda ev: ev.begin):
-        event = Event(event)
+        event = EntropiaEvent(event)
         if not event.is_past_event:
             event_strings.append(
                 "\n" +
