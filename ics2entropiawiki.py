@@ -294,7 +294,7 @@ def main():
     site.login(wiki_user, wiki_pw)
     page = site.pages[wiki_page]
     if termine:
-        page.save(termine, "Terminbox was here")
+        page.save(termine, "Terminbot was here")
 
 
 if __name__ == '__main__':
