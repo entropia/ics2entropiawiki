@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
+"""ics2entropiawiki
+
+Read an ics file with the entropia events and insert them in to the
+entropia homepage wiki.
+
+Example:
+
+        $ ics2entropiawiki.py --config /etc/ics2entropiawiki/config.ini
+
+Inserts events not in the past to the "Termine" Wiki page and appends past
+events to the "Vergangene_Termine" Site
+"""
 import configparser
 import re
 
@@ -48,6 +61,11 @@ class EntropiaEvent(object):
 
     @property
     def location(self):
+        """
+        Retrieve the location of an event
+        :return: location
+        :rtype: str
+        """
         locations = {
             "entropia": "[[Anfahrt|Entropia]]",
         }
@@ -196,6 +214,11 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
 
 
 def main():
+    """
+    Retrieve arguments from the command line, the config file respectively
+    :return: Parsed arguments from command line, config file
+    :rtype: list
+    """
     parser = ArgumentParser()
     parser.add_argument(
         "-c", "--config",
@@ -264,6 +287,10 @@ def main():
             print("Please have a look at the sample config provided with the package")
             raise e
 
+    """
+    :return: None
+    :rtype: None
+    """
     event_strings = []
     past_event_strings = []
     past_events = []
