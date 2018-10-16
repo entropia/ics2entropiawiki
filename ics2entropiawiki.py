@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
 import configparser
-import requests
 import re
 
-from ics import Calendar
 from argparse import ArgumentParser
 from datetime import timedelta, datetime
+from ics import Calendar
 from mwclient import Site
 from dateutil.tz import tzlocal
 
-table_header = """
+import requests
+
+
 {| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
 ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
 """
