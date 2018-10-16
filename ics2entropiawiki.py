@@ -49,7 +49,7 @@ TABLE_FOOTER = (
 LINE_SEPARATOR = "|-"
 
 
-class EntropiaEvent(object):
+class EntropiaEvent():
     """
     Parses an ics Event and converts it to an entropia-wiki suitable form
     """
@@ -203,7 +203,7 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
             text = text[:last_table_position]+[append_list, ]+text[last_table_position:]
         else:
             append_list = (
-                3*'\n' +
+                3 * '\n' +
                 year_header +
                 ARCHIVE_TABLE_HEADER +
                 '\n' +
