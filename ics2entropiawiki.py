@@ -274,7 +274,7 @@ def get_args():
     file = args.local_file
     wiki = {
         'user': args.wiki_user,
-        'pw': args.wiki_pw,
+        'pass': args.wiki_pw,
         'page': args.wiki_page,
         'archive': args.wiki_archive,
     }
@@ -323,11 +323,11 @@ def main():
             )
             past_events.append(event)
 
-    append_past_events(past_events, wiki['user'], wiki['pw'], wiki['archive'])
+    append_past_events(past_events, wiki['user'], wiki['pass'], wiki['archive'])
     termine = TABLE_HEADER + "\n" + "".join(event_strings) + "\n" + "".join(TABLE_FOOTER)
     print(termine)
     site = Site('entropia.de', path='/')
-    site.login(wiki['user'], wiki['pw'])
+    site.login(wiki['user'], wiki['pass'])
     page = site.pages[wiki['page']]
     if termine:
         page.save(termine, "Terminbot was here")
