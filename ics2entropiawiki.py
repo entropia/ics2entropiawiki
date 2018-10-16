@@ -217,8 +217,7 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
     page.save("\n".join(text))
 
 
-
-def main():
+def get_args():
     """
     Retrieve arguments from the command line, the config file respectively
     :return: Parsed arguments from command line, config file
@@ -273,29 +272,32 @@ def main():
     configfile = args.configfile
     ics_url = args.ics_url
     file = args.local_file
-    wiki_user = args.wiki_user
-    wiki_pw = args.wiki_pw
-    wiki_page = args.wiki_page
-    wiki_archive = args.wiki_archive
+    wiki = {
+        'user': args.wiki_user,
+        'pw': args.wiki_pw,
+        'page': args.wiki_page,
+        'archive': args.wiki_archive,
+    }
 
     if configfile:
         config = configparser.ConfigParser()
         config.read(configfile)
         try:
             ics_url = config["default"]["url"]
-            wiki_user = config["wiki"]["user"]
-            wiki_pw = config["wiki"]["pass"]
-            wiki_page = config["wiki"]["page"]
-            wiki_archive = config["wiki"]["archive"]
-            print(ics_url)
-        except KeyError as e:
+            wiki = config["wiki"]
+        except KeyError as error:
             print("Please have a look at the sample config provided with the package")
-            raise e
+            raise error
 
+    return ics_url, file, wiki
+
+
+def main():
     """
     :return: None
     :rtype: None
     """
+    ics_url, file, wiki = get_args()
     event_strings = []
     past_event_strings = []
     past_events = []
@@ -320,12 +322,13 @@ def main():
                 str(event)
             )
             past_events.append(event)
-    append_past_events(past_events, wiki_user, wiki_pw, wiki_archive)
+
+    append_past_events(past_events, wiki['user'], wiki['pw'], wiki['archive'])
     termine = TABLE_HEADER + "\n" + "".join(event_strings) + "\n" + "".join(TABLE_FOOTER)
     print(termine)
     site = Site('entropia.de', path='/')
-    site.login(wiki_user, wiki_pw)
-    page = site.pages[wiki_page]
+    site.login(wiki['user'], wiki['pw'])
+    page = site.pages[wiki['page']]
     if termine:
         page.save(termine, "Terminbot was here")
 
