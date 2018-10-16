@@ -96,10 +96,13 @@ class EntropiaEvent(object):
         :return: Entropia-Wiki formated end time
         :rtype: str
         """
+        end_date = ""
+
         if self.endtime - self.begintime > timedelta(days=1):
-            return " - " + self.endtime.strftime("%a., %d.%m.%Y")
-        else:
-            return ""
+            end_date = " - " + self.endtime.strftime("%a., %d.%m.%Y")
+
+        return end_date
+
 
     @property
     def is_past_event(self):
@@ -115,10 +118,12 @@ class EntropiaEvent(object):
         :return: The starting time of the event
         :rtype: str
         """
+        start_time = " "
+
         if not self.event.all_day:
-            return self.begintime.strftime("%H:%M")
-        else:
-            return " "
+            start_time = self.begintime.strftime("%H:%M")
+
+        return start_time
 
     @property
     def description(self):
@@ -146,18 +151,16 @@ class EntropiaEvent(object):
         :return: A wiki line describing the event
         :rtype: str
         """
-        event_str = ("| " +
-                     self.begin_date +
-                     self.end_date +
-                     " || " +
-                     self.start_time +
-                     " || " +
-                     self.location +
-                     " || " +
-                     self.description
-                     )
-
-        return event_str
+        return ("| " +
+                self.begin_date +
+                self.end_date +
+                " || " +
+                self.start_time +
+                " || " +
+                self.location +
+                " || " +
+                self.description
+                )
 
 
 def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
@@ -213,7 +216,6 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
 
     page.save("\n".join(text))
 
-    return None
 
 
 def main():
