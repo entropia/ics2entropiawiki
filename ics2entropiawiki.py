@@ -107,7 +107,7 @@ class EntropiaEvent():
     @property
     def is_past_event(self):
         """
-        :return: Chech if the event lies in the past
+        :return: Check if the event lies in the past
         :rtype: bool
         """
         return self.endtime - datetime.now(tz=tzlocal()) < timedelta(days=1)
