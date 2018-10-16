@@ -25,11 +25,12 @@ from dateutil.tz import tzlocal
 import requests
 
 
+TABLE_HEADER = """
 {| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
 ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
 """
 
-archive_table_header = """
+ARCHIVE_TABLE_HEADER = """
 {| class="termine" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;" width="100%"
 |width=15%|'''Datum'''
 |width=6%|'''Zeit'''
@@ -37,13 +38,15 @@ archive_table_header = """
 |width=69%|'''Beschreibung'''
 """
 
-table_footer = ("|}",
-                "\n",
-                "Weitere Links: [[Vorlage:Termine|Termine]] ",
-                "([https://entropia.de/index.php?title=Vorlage:Termine&action=edit Bearbeiten]),",
-                " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
-                )
-line_separator = "|-"
+TABLE_FOOTER = (
+    "|}",
+    "\n",
+    "Weitere Links: [[Vorlage:Termine|Termine]] ",
+    "([https://entropia.de/index.php?title=Vorlage:Termine&action=edit Bearbeiten]),",
+    " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
+)
+
+LINE_SEPARATOR = "|-"
 
 
 class EntropiaEvent(object):
@@ -191,7 +194,7 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
         if year_header in text:
             append_list = (
                 '\n' +
-                line_separator +
+                LINE_SEPARATOR +
                 str(event)
             )
             text = text[:last_table_position]+[append_list, ]+text[last_table_position:]
@@ -199,9 +202,9 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
             append_list = (
                 3*'\n' +
                 year_header +
-                archive_table_header +
+                ARCHIVE_TABLE_HEADER +
                 '\n' +
-                line_separator +
+                LINE_SEPARATOR +
                 '\n' +
                 str(event) +
                 '\n|}'
@@ -305,18 +308,18 @@ def main():
         if not event.is_past_event:
             event_strings.append(
                 "\n" +
-                line_separator +
+                LINE_SEPARATOR +
                 str(event)
             )
         else:
             past_event_strings.append(
                 "\n" +
-                line_separator +
+                LINE_SEPARATOR +
                 str(event)
             )
             past_events.append(event)
     append_past_events(past_events, wiki_user, wiki_pw, wiki_archive)
-    termine = table_header+"\n"+"".join(event_strings)+"\n"+"".join(table_footer)
+    termine = TABLE_HEADER + "\n" + "".join(event_strings) + "\n" + "".join(TABLE_FOOTER)
     print(termine)
     site = Site('entropia.de', path='/')
     site.login(wiki_user, wiki_pw)
