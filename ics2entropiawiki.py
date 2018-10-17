@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
+"""ics2entropiawiki
+
+Read an ics file with the entropia events and insert them in to the
+entropia homepage wiki.
+
+Example:
+
+        $ ics2entropiawiki.py --config /etc/ics2entropiawiki/config.ini
+
+Inserts events not in the past to the "Termine" Wiki page and appends past
+events to the "Vergangene_Termine" Site
+"""
 import configparser
-import requests
 import re
 
-from ics import Calendar
 from argparse import ArgumentParser
 from datetime import timedelta, datetime
+from ics import Calendar
 from mwclient import Site
 from dateutil.tz import tzlocal
 
-table_header = """
+import requests
+
+
+TABLE_HEADER = """
 {| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
 ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
 """
 
-archive_table_header = """
+ARCHIVE_TABLE_HEADER = """
 {| class="termine" border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;" width="100%"
 |width=15%|'''Datum'''
 |width=6%|'''Zeit'''
@@ -23,16 +38,18 @@ archive_table_header = """
 |width=69%|'''Beschreibung'''
 """
 
-table_footer = ("|}",
-                "\n",
-                "Weitere Links: [[Vorlage:Termine|Termine]] ",
-                "([https://entropia.de/index.php?title=Vorlage:Termine&action=edit Bearbeiten]),",
-                " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
-                )
-line_separator = "|-"
+TABLE_FOOTER = (
+    "|}",
+    "\n",
+    "Weitere Links: [[Vorlage:Termine|Termine]] ",
+    "([https://entropia.de/index.php?title=Vorlage:Termine&action=edit Bearbeiten]),",
+    " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
+)
+
+LINE_SEPARATOR = "|-"
 
 
-class EntropiaEvent(object):
+class EntropiaEvent():
     """
     Parses an ics Event and converts it to an entropia-wiki suitable form
     """
@@ -47,6 +64,11 @@ class EntropiaEvent(object):
 
     @property
     def location(self):
+        """
+        Retrieve the location of an event
+        :return: location
+        :rtype: str
+        """
         locations = {
             "entropia": "[[Anfahrt|Entropia]]",
         }
@@ -63,7 +85,7 @@ class EntropiaEvent(object):
     @property
     def begin_date(self):
         """
-        :return: Entropia-Wiki formated begin time
+        :return: Entropia-Wiki formatted begin time
         :rtype: str
         """
         return self.begintime.strftime("%a., %d.%m.%Y")
@@ -71,18 +93,21 @@ class EntropiaEvent(object):
     @property
     def end_date(self):
         """
-        :return: Entropia-Wiki formated end time
+        :return: Entropia-Wiki formatted end time
         :rtype: str
         """
+        end_date = ""
+
         if self.endtime - self.begintime > timedelta(days=1):
-            return " - " + self.endtime.strftime("%a., %d.%m.%Y")
-        else:
-            return ""
+            end_date = " - " + self.endtime.strftime("%a., %d.%m.%Y")
+
+        return end_date
+
 
     @property
     def is_past_event(self):
         """
-        :return: Chech if the event lies in the past
+        :return: Check if the event lies in the past
         :rtype: bool
         """
         return self.endtime - datetime.now(tz=tzlocal()) < timedelta(days=1)
@@ -93,10 +118,12 @@ class EntropiaEvent(object):
         :return: The starting time of the event
         :rtype: str
         """
+        start_time = " "
+
         if not self.event.all_day:
-            return self.begintime.strftime("%H:%M")
-        else:
-            return " "
+            start_time = self.begintime.strftime("%H:%M")
+
+        return start_time
 
     @property
     def description(self):
@@ -124,18 +151,16 @@ class EntropiaEvent(object):
         :return: A wiki line describing the event
         :rtype: str
         """
-        event_str = ("| " +
-                     self.begin_date +
-                     self.end_date +
-                     " || " +
-                     self.start_time +
-                     " || " +
-                     self.location +
-                     " || " +
-                     self.description
-                     )
-
-        return event_str
+        return ("| " +
+                self.begin_date +
+                self.end_date +
+                " || " +
+                self.start_time +
+                " || " +
+                self.location +
+                " || " +
+                self.description
+                )
 
 
 def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
@@ -172,17 +197,17 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
         if year_header in text:
             append_list = (
                 '\n' +
-                line_separator +
+                LINE_SEPARATOR +
                 str(event)
             )
             text = text[:last_table_position]+[append_list, ]+text[last_table_position:]
         else:
             append_list = (
-                3*'\n' +
+                3 * '\n' +
                 year_header +
-                archive_table_header +
+                ARCHIVE_TABLE_HEADER +
                 '\n' +
-                line_separator +
+                LINE_SEPARATOR +
                 '\n' +
                 str(event) +
                 '\n|}'
@@ -191,10 +216,13 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
 
     page.save("\n".join(text))
 
-    return None
 
-
-def main():
+def get_args():
+    """
+    Retrieve arguments from the command line, the config file respectively
+    :return: Parsed arguments from command line, config file
+    :rtype: list
+    """
     parser = ArgumentParser()
     parser.add_argument(
         "-c", "--config",
@@ -244,25 +272,32 @@ def main():
     configfile = args.configfile
     ics_url = args.ics_url
     file = args.local_file
-    wiki_user = args.wiki_user
-    wiki_pw = args.wiki_pw
-    wiki_page = args.wiki_page
-    wiki_archive = args.wiki_archive
+    wiki = {
+        'user': args.wiki_user,
+        'pass': args.wiki_pw,
+        'page': args.wiki_page,
+        'archive': args.wiki_archive,
+    }
 
     if configfile:
         config = configparser.ConfigParser()
         config.read(configfile)
         try:
             ics_url = config["default"]["url"]
-            wiki_user = config["wiki"]["user"]
-            wiki_pw = config["wiki"]["pass"]
-            wiki_page = config["wiki"]["page"]
-            wiki_archive = config["wiki"]["archive"]
-            print(ics_url)
-        except KeyError as e:
+            wiki = config["wiki"]
+        except KeyError as error:
             print("Please have a look at the sample config provided with the package")
-            raise e
+            raise error
 
+    return ics_url, file, wiki
+
+
+def main():
+    """
+    :return: None
+    :rtype: None
+    """
+    ics_url, file, wiki = get_args()
     event_strings = []
     past_event_strings = []
     past_events = []
@@ -277,22 +312,23 @@ def main():
         if not event.is_past_event:
             event_strings.append(
                 "\n" +
-                line_separator +
+                LINE_SEPARATOR +
                 str(event)
             )
         else:
             past_event_strings.append(
                 "\n" +
-                line_separator +
+                LINE_SEPARATOR +
                 str(event)
             )
             past_events.append(event)
-    append_past_events(past_events, wiki_user, wiki_pw, wiki_archive)
-    termine = table_header+"\n"+"".join(event_strings)+"\n"+"".join(table_footer)
+
+    append_past_events(past_events, wiki['user'], wiki['pass'], wiki['archive'])
+    termine = TABLE_HEADER + "\n" + "".join(event_strings) + "\n" + "".join(TABLE_FOOTER)
     print(termine)
     site = Site('entropia.de', path='/')
-    site.login(wiki_user, wiki_pw)
-    page = site.pages[wiki_page]
+    site.login(wiki['user'], wiki['pass'])
+    page = site.pages[wiki['page']]
     if termine:
         page.save(termine, "Terminbot was here")
 
