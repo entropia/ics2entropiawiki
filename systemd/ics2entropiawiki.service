@@ -1,0 +1,8 @@
+[Unit]
+Description=Retrieve ics File and publish it to the entropia wiki
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ics2entropiawiki -c /etc/ics2entropiawiki/config.ini
+User=ics2entropiawiki
+Group=systemd-journal
