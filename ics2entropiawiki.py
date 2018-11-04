@@ -226,7 +226,7 @@ def get_args():
     parser = ArgumentParser()
     parser.add_argument(
         "-c", "--config",
-        default="/etc/baikal2wiki/config.ini",
+        default="/etc/ics2entropiawiki/config.ini",
         dest="configfile",
         help="Configuration file path",
         metavar="CONFIG"
