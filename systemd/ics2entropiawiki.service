@@ -1,8 +1,20 @@
 [Unit]
 Description=Retrieve ics File and publish it to the entropia wiki
+Documentation=https://github.com/entropia/ics2entropiawiki
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ics2entropiawiki -c /etc/ics2entropiawiki/config.ini
-User=ics2entropiawiki
-Group=systemd-journal
+ExecStart=/usr/local/bin/ics2entropiawiki
+ConfigurationDirectory=ics2entropiawiki
+
+ProtectSystem=strict
+ProtectKernelTunables=yes
+PrivateTmp=yes
+ProtectKernelModules=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=yes
+ReadOnlyPaths=/etc/ics2entropiawiki
+
+[Install]
+WantedBy=multi-user.target
