@@ -1,4 +1,5 @@
 ics>=0.4
 mwclient
 requests
-dateutil
+python-dateutil
+configparser
