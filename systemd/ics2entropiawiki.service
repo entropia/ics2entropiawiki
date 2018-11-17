@@ -4,7 +4,7 @@ Documentation=https://github.com/entropia/ics2entropiawiki
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ics2entropiawiki
+ExecStart=/opt/ics2entropiawiki/venv/bin/python3 /opt/ics2entropiawiki/ics2entropiawiki.py
 ConfigurationDirectory=ics2entropiawiki
 
 ProtectSystem=strict
