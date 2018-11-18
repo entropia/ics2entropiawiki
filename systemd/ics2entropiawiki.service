@@ -4,8 +4,13 @@ Documentation=https://github.com/entropia/ics2entropiawiki
 
 [Service]
 Type=simple
-ExecStart=/opt/ics2entropiawiki/venv/bin/python3 /opt/ics2entropiawiki/ics2entropiawiki.py
-ConfigurationDirectory=ics2entropiawiki
+ExecStart=/opt/ics2entropiawiki/venv/bin/python /opt/ics2entropiawiki/ics2entropiawiki.py
+# ConfigurationDirectory not available on Debian Stretch
+#ConfigurationDirectory=ics2entropiawiki
+
+# Create user with adduser --system ics2entropiawiki
+User=ics2entropiawiki
+Group=nogroup
 
 ProtectSystem=strict
 ProtectKernelTunables=yes
