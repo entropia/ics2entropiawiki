@@ -267,6 +267,12 @@ def get_args():
         help='Wiki archive',
         metavar='WIKIARCHIVE'
     )
+    parser.add_argument(
+        "-d", "--debug",
+        dest="debug",
+        action="store_true",
+        default=False
+    )
 
     args = parser.parse_args()
     configfile = args.configfile
@@ -278,6 +284,7 @@ def get_args():
         'page': args.wiki_page,
         'archive': args.wiki_archive,
     }
+    debug = args.debug
 
     if configfile:
         config = configparser.ConfigParser()
@@ -289,7 +296,7 @@ def get_args():
             print("Please have a look at the sample config provided with the package")
             raise error
 
-    return ics_url, file, wiki
+    return ics_url, file, wiki, debug
 
 
 def deradicalise_ical( ics ):
@@ -311,7 +318,7 @@ def main():
     :return: None
     :rtype: None
     """
-    ics_url, file, wiki = get_args()
+    ics_url, file, wiki,debug = get_args()
     event_strings = []
     past_event_strings = []
     past_events = []
@@ -339,7 +346,8 @@ def main():
 
     append_past_events(past_events, wiki['user'], wiki['pass'], wiki['archive'])
     termine = TABLE_HEADER + "\n" + "".join(event_strings) + "\n" + "".join(TABLE_FOOTER)
-    print(termine)
+    if debug:
+        print(termine)
     site = Site('entropia.de', path='/')
     site.login(wiki['user'], wiki['pass'])
     page = site.pages[wiki['page']]
