@@ -46,7 +46,7 @@ TABLE_FOOTER = (
     " [[Vorlage:Vergangene_Termine|Vergangene Termine]], [[Anfahrt]]"
 )
 
-LINE_SEPARATOR = "|-"
+LINE_SEPARATOR = "|-\n"
 
 
 class EntropiaEvent():
@@ -226,7 +226,7 @@ def get_args():
     parser = ArgumentParser()
     parser.add_argument(
         "-c", "--config",
-        default="/etc/baikal2wiki/config.ini",
+        default="/etc/ics2entropiawiki/config.ini",
         dest="configfile",
         help="Configuration file path",
         metavar="CONFIG"
@@ -292,6 +292,20 @@ def get_args():
     return ics_url, file, wiki
 
 
+def deradicalise_ical( ics ):
+    """
+    :param ics: input file
+    :type ics: str
+    :return: file with remove radicale_headers
+    """
+    deradicalised = ""
+    for line in ics.splitlines():
+        if 'X-RADICALE-NAME:' not in line:
+            deradicalised += "\n"+line
+
+    return deradicalised
+
+
 def main():
     """
     :return: None
@@ -303,9 +317,9 @@ def main():
     past_events = []
 
     if file:
-        calendar = Calendar(open(file))
+        calendar = Calendar(deradicalise_ical(open(file).read()))
     else:
-        calendar = Calendar(requests.get(ics_url).text)
+        calendar = Calendar(deradicalise_ical(requests.get(ics_url).text))
 
     for event in sorted(calendar.events, key=lambda ev: ev.begin):
         event = EntropiaEvent(event)
@@ -331,6 +345,7 @@ def main():
     page = site.pages[wiki['page']]
     if termine:
         page.save(termine, "Terminbot was here")
+        page.purge()
 
 
 if __name__ == '__main__':

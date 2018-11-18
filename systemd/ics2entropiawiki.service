@@ -1,0 +1,20 @@
+[Unit]
+Description=Retrieve ics File and publish it to the entropia wiki
+Documentation=https://github.com/entropia/ics2entropiawiki
+
+[Service]
+Type=simple
+ExecStart=/opt/ics2entropiawiki/venv/bin/python3 /opt/ics2entropiawiki/ics2entropiawiki.py
+ConfigurationDirectory=ics2entropiawiki
+
+ProtectSystem=strict
+ProtectKernelTunables=yes
+PrivateTmp=yes
+ProtectKernelModules=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=yes
+ReadOnlyPaths=/etc/ics2entropiawiki
+
+[Install]
+WantedBy=multi-user.target
