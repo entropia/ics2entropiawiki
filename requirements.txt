@@ -3,3 +3,6 @@ mwclient
 requests
 python-dateutil
 configparser
+argparse
+datetime
+requests
