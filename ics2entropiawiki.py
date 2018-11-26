@@ -49,7 +49,7 @@ LINE_SEPARATOR = "|-\n"
 
 try:
     locale.setlocale(locale.LC_ALL, 'de_DE.utf8')
-except:
+except locale.Error:
     pass
 
 class EntropiaEvent():
