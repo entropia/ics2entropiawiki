@@ -15,15 +15,14 @@ events to the "Vergangene_Termine" Site
 """
 import configparser
 import re
+import requests
+import locale
 
 from argparse import ArgumentParser
 from datetime import timedelta, datetime
 from ics import Calendar
 from mwclient import Site
 from dateutil.tz import tzlocal
-
-import requests
-
 
 TABLE_HEADER = """
 {| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
@@ -48,6 +47,10 @@ TABLE_FOOTER = (
 
 LINE_SEPARATOR = "|-\n"
 
+try:
+    locale.setlocale(locale.LC_ALL, 'de_DE.utf8')
+except:
+    pass
 
 class EntropiaEvent():
     """
