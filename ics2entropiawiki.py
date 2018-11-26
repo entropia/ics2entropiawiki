@@ -49,7 +49,7 @@ TABLE_FOOTER = (
 LINE_SEPARATOR = "|-\n"
 
 
-class EntropiaEvent():
+class EntropiaEvent(object):
     """
     Parses an ics Event and converts it to an entropia-wiki suitable form
     """
@@ -299,7 +299,7 @@ def get_args():
     return ics_url, file, wiki, debug
 
 
-def deradicalise_ical( ics ):
+def deradicalise_ical(ics):
     """
     :param ics: input file
     :type ics: str
@@ -318,7 +318,7 @@ def main():
     :return: None
     :rtype: None
     """
-    ics_url, file, wiki,debug = get_args()
+    ics_url, file, wiki, debug = get_args()
     event_strings = []
     past_event_strings = []
     past_events = []
