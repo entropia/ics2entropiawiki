@@ -326,7 +326,9 @@ def main():
     if file:
         calendar = Calendar(deradicalise_ical(open(file).read()))
     else:
-        calendar = Calendar(deradicalise_ical(requests.get(ics_url).text))
+        ics_result = requests.get(ics_url)
+        ics_result.encoding = 'utf-8'
+        calendar = Calendar(deradicalise_ical(ics_result.text))
 
     for event in sorted(calendar.events, key=lambda ev: ev.begin):
         event = EntropiaEvent(event)
