@@ -52,7 +52,7 @@ try:
 except locale.Error:
     pass
 
-class EntropiaEvent():
+class EntropiaEvent(object):
     """
     Parses an ics Event and converts it to an entropia-wiki suitable form
     """
@@ -302,7 +302,7 @@ def get_args():
     return ics_url, file, wiki, debug
 
 
-def deradicalise_ical( ics ):
+def deradicalise_ical(ics):
     """
     :param ics: input file
     :type ics: str
@@ -321,7 +321,7 @@ def main():
     :return: None
     :rtype: None
     """
-    ics_url, file, wiki,debug = get_args()
+    ics_url, file, wiki, debug = get_args()
     event_strings = []
     past_event_strings = []
     past_events = []
@@ -329,7 +329,9 @@ def main():
     if file:
         calendar = Calendar(deradicalise_ical(open(file).read()))
     else:
-        calendar = Calendar(deradicalise_ical(requests.get(ics_url).text))
+        ics_result = requests.get(ics_url)
+        ics_result.encoding = 'utf-8'
+        calendar = Calendar(deradicalise_ical(ics_result.text))
 
     for event in sorted(calendar.events, key=lambda ev: ev.begin):
         event = EntropiaEvent(event)
