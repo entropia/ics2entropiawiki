@@ -139,9 +139,12 @@ class EntropiaEvent(object):
 
         if self.event.description:
             links = re.findall("^Link:(.*)$", event.description)
+            wiki = re.findall("^[Ww]iki:(.*)$", event.description)
 
         if links and event.name:
             description = "["+links[0]+" "+event.name+"]"
+        elif wiki:
+            description = wiki[0]
         elif not event.name:
             description = "N.A."
         else:
