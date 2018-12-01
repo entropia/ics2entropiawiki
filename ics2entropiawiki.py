@@ -142,7 +142,7 @@ class EntropiaEvent(object):
 
         if links and event.name:
             description = "["+links[0]+" "+event.name+"]"
-        elif not self.event.name:
+        elif not event.name:
             description = "N.A."
         else:
             description = event.name
