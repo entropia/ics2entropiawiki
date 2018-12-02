@@ -13,10 +13,10 @@ Example:
 Inserts events not in the past to the "Termine" Wiki page and appends past
 events to the "Vergangene_Termine" Site
 """
+import locale
 import configparser
 import re
 import requests
-import locale
 
 from argparse import ArgumentParser
 from datetime import timedelta, datetime
@@ -52,7 +52,8 @@ try:
 except locale.Error:
     pass
 
-class EntropiaEvent(object):
+
+class EntropiaEvent:
     """
     Parses an ics Event and converts it to an entropia-wiki suitable form
     """
