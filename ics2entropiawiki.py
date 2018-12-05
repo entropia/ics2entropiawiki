@@ -107,6 +107,14 @@ class EntropiaEvent:
 
         return end_date
 
+    @property
+    def days_to_event(self):
+        """
+        :return: Days to the start of the event
+        :rtype: datetime.timedelta
+        """
+        return self.endtime - datetime.now(tz=tzlocal())
+
 
     @property
     def is_past_event(self):
@@ -114,7 +122,7 @@ class EntropiaEvent:
         :return: Check if the event lies in the past
         :rtype: bool
         """
-        return self.endtime - datetime.now(tz=tzlocal()) < timedelta(days=1)
+        return self.days_to_event < timedelta(days=0)
 
     @property
     def start_time(self):
