@@ -144,6 +144,7 @@ class EntropiaEvent:
         :rtype: str
         """
         links = None
+        wiki = None
         event = self.event
 
         if self.event.description:
