@@ -115,7 +115,6 @@ class EntropiaEvent:
         """
         return self.endtime - datetime.now(tz=tzlocal())
 
-
     @property
     def is_past_event(self):
         """
