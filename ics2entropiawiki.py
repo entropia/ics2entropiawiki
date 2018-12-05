@@ -186,7 +186,6 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
     page = site.pages[wiki_archive]
     text = page.text().split('\n')
     last_table_position = 0
-
     for event in past_events:
         year_header = "== {} ==".format(event.endtime.strftime('%Y'))
 
@@ -194,7 +193,7 @@ def append_past_events(past_events, wiki_user, wiki_pw, wiki_archive):
             if txtline == '|}':
                 last_table_position = index
 
-        if str(event) not in text:
+        if str(event) in text:
             continue
 
         if year_header in text:
@@ -342,11 +341,6 @@ def main():
                 str(event)
             )
         else:
-            past_event_strings.append(
-                "\n" +
-                LINE_SEPARATOR +
-                str(event)
-            )
             past_events.append(event)
 
     append_past_events(past_events, wiki['user'], wiki['pass'], wiki['archive'])
