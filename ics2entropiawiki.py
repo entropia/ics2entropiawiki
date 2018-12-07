@@ -13,10 +13,10 @@ Example:
 Inserts events not in the past to the "Termine" Wiki page and appends past
 events to the "Vergangene_Termine" Site
 """
+import locale
 import configparser
 import re
 import requests
-import locale
 
 from argparse import ArgumentParser
 from datetime import timedelta, datetime
@@ -52,7 +52,8 @@ try:
 except locale.Error:
     pass
 
-class EntropiaEvent(object):
+
+class EntropiaEvent:
     """
     Parses an ics Event and converts it to an entropia-wiki suitable form
     """
@@ -106,6 +107,13 @@ class EntropiaEvent(object):
 
         return end_date
 
+    @property
+    def days_to_event(self):
+        """
+        :return: Days to the start of the event
+        :rtype: datetime.timedelta
+        """
+        return self.endtime - datetime.now(tz=tzlocal())
 
     @property
     def is_past_event(self):
@@ -113,7 +121,7 @@ class EntropiaEvent(object):
         :return: Check if the event lies in the past
         :rtype: bool
         """
-        return self.endtime - datetime.now(tz=tzlocal()) < timedelta(days=-1)
+        return self.days_to_event < timedelta(days=0)
 
     @property
     def start_time(self):
@@ -135,14 +143,18 @@ class EntropiaEvent(object):
         :rtype: str
         """
         links = None
+        wiki = None
         event = self.event
 
         if self.event.description:
-            links = re.findall("^Link:(.*)$", event.description)
+            links = re.findall("^[Ll]ink:(.*)$", event.description)
+            wiki = re.findall("^[Ww]iki:(.*)$", event.description)
 
         if links and event.name:
             description = "["+links[0]+" "+event.name+"]"
-        elif not self.event.name:
+        elif wiki:
+            description = wiki[0]
+        elif not event.name:
             description = "N.A."
         else:
             description = event.name
