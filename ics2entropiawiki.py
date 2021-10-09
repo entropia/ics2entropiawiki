@@ -34,7 +34,7 @@ WIRD ÜBERSCHRIEBEN
 """
 
 TABLE_HEADER = """
-{| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;" 
+{| class="termine" border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse:collapse;"
 ! style="width:250px;" |  Datum              !! style="width:50px;" | Zeit  !! Ort                  !! Beschreibung\
 """
 
@@ -343,7 +343,6 @@ def main():
     """
     ics_url, file, wiki, debug = get_args()
     event_strings = []
-    past_event_strings = []
     past_events = []
 
     if file:
